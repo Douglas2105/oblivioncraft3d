@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Oblivion Craft — 3D-печатные изделия</title>
+  <meta name="description" content="Мастерская 3D-печати — фигурки, сувениры, аксессуары на заказ. Печать FDM и SLA, покраска, шлифовка и сборка." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --accent:#E76F2F; /* фирменный оранжевый */
+      --accent-2:#FFAE6B;
+      --muted:#6b6b6b;
+      --bg:#fff;
+      --card-bg:#ffffff;
+      --glass:rgba(255,255,255,0.6);
+      --shadow: 0 12px 30px rgba(18,18,18,0.08);
+      --radius:16px;
+      --maxw:1200px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;margin:0;color:#111;background:linear-gradient(180deg,#FFFDFB 0%, #FFF6F0 100%)}
+
+    .container{max-width:var(--maxw);margin:0 auto;padding:28px}
+
+    /* Header */
+    header{position:sticky;top:0;background:transparent;padding-top:14px;z-index:50}
+    .nav{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:18px;box-shadow:0 6px 20px rgba(231,111,47,0.18)}
+    nav a{color:#222;text-decoration:none;margin:0 10px;font-weight:600}
+    .actions{display:flex;align-items:center;gap:10px}
+    .cta{background:var(--accent);color:#fff;padding:10px 14px;border-radius:12px;text-decoration:none;box-shadow:0 8px 20px rgba(231,111,47,0.14);font-weight:700}
+
+    /* Hero */
+    .hero{padding:64px 0 36px}
+    .hero-grid{display:grid;grid-template-columns:1fr 420px;gap:36px;align-items:center}
+    h1{font-size:36px;margin:0 0 12px;color:#222;line-height:1.05}
+    p.lead{color:var(--muted);margin:0 0 20px;font-size:18px}
+
+    .hero-left{display:flex;flex-direction:column;gap:18px}
+    .search{display:flex;gap:10px}
+    .search input{flex:1;padding:14px;border-radius:12px;border:1px solid #f0d8ca;background:#fff;font-size:15px}
+    .search button{padding:12px 16px;border-radius:12px;border:none;background:var(--accent);color:#fff;font-weight:700;cursor:pointer}
+
+    /* Tags */
+    .tags{display:flex;gap:8px;flex-wrap:wrap}
+    .tag{padding:8px 12px;border-radius:999px;border:1px solid rgba(231,111,47,0.12);background:rgba(255,255,255,0.6);color:var(--accent);font-weight:700}
+
+    /* Hero aside - quick order */
+    .quick-card{background:linear-gradient(180deg,#fff,#fff0);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
+    .quick-card p{margin:8px 0;color:var(--muted)}
+
+    /* Products */
+    main{padding:40px 0}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:24px}
+
+    .card{background:var(--card-bg);border-radius:16px;padding:14px;box-shadow:0 8px 24px rgba(17,17,17,0.06);display:flex;flex-direction:column;transition:transform .28s,box-shadow .28s;transform:translateY(0);opacity:0;will-change:transform,opacity}
+    .card.in-view{transform:translateY(-8px);opacity:1}
+    .thumb{height:220px;border-radius:12px;background-position: center;background-size: cover; display:flex;align-items:center;justify-content:center;color:#c9b3a1;font-size:14px;border:1px solid rgba(0,0,0,0.03)}
+    .title{font-weight:700;margin:12px 0 6px}
+    .desc{color:var(--muted);font-size:14px;margin-bottom:10px}
+    .meta{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+    .price{margin-top:12px;font-weight:800;color:var(--accent);font-size:18px}
+
+    .card .controls{display:flex;gap:8px;margin-top:12px}
+    .btn{background:var(--accent);color:#fff;padding:10px 12px;border-radius:10px;border:none;font-weight:700;cursor:pointer}
+    .ghost{background:transparent;border:2px solid rgba(0,0,0,0.06);padding:10px 12px;border-radius:10px;cursor:pointer}
+
+    /* Advantages */
+    .advantages{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin:40px 0}
+    .adv{background:#fff;border-radius:12px;padding:18px;display:flex;gap:12px;align-items:center;box-shadow:0 8px 24px rgba(17,17,17,0.04);opacity:0;transform:translateY(8px);transition:all .4s}
+    .adv.in-view{opacity:1;transform:translateY(0)}
+    .adv svg{width:44px;height:44px;flex:0 0 44px}
+    .adv h4{margin:0;font-size:16px}
+    .adv p{margin:4px 0 0;color:var(--muted)}
+
+    /* Order section - non-classic */
+    #order-section{margin-top:40px}
+    .order-panel{position:relative;border-radius:28px;padding:36px;overflow:hidden;display:grid;grid-template-columns:1fr 420px;gap:24px;align-items:center;background:linear-gradient(135deg,var(--accent) 0%, var(--accent-2) 100%);color:#fff;box-shadow:0 20px 60px rgba(231,111,47,0.18)}
+
+    /* decorative floating shapes */
+    .order-panel::before,.order-panel::after{content:'';position:absolute;border-radius:50%;filter:blur(36px);opacity:0.25}
+    .order-panel::before{width:360px;height:360px;background:rgba(255,140,60,0.12);right:-120px;top:-60px}
+    .order-panel::after{width:220px;height:220px;background:rgba(255,190,140,0.08);left:-60px;bottom:-80px}
+
+    .order-left h3{font-size:28px;margin:0 0 8px}
+    .order-left p{margin:0 0 14px;color:#fff;opacity:0.95}
+    .order-form{display:grid;gap:12px}
+    .order-form input,.order-form textarea{padding:12px;border-radius:12px;border:none;font-size:15px}
+    .order-form input::placeholder,.order-form textarea::placeholder{color:rgba(255,255,255,0.8)}
+    .order-form .upload{display:flex;gap:8px;align-items:center}
+    .order-cta{background:#fff;color:var(--accent);padding:12px 16px;border-radius:12px;font-weight:800;border:none;cursor:pointer;justify-self:start}
+
+    .order-right{display:flex;flex-direction:column;gap:12px}
+    .price-est{background:rgba(255,255,255,0.12);padding:12px;border-radius:12px}
+    .specs{font-size:14px;color:rgba(255,255,255,0.95)}
+    .materials{display:flex;gap:8px;flex-wrap:wrap}
+    .material{background:rgba(255,255,255,0.12);padding:8px 10px;border-radius:999px;font-weight:700;cursor:pointer;position:relative}
+    .material:hover{background:rgba(255,255,255,0.18)}
+
+    /* tooltip */
+    .tooltip{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 8px);background:#fff;color:#222;padding:8px 10px;border-radius:8px;font-size:13px;box-shadow:0 8px 20px rgba(0,0,0,0.12);white-space:nowrap;display:none}
+    .material:hover .tooltip{display:block}
+
+    /* Footer */
+    footer{margin-top:60px;padding:48px 0;background:transparent}
+    .cols{display:grid;grid-template-columns:1fr 1fr 260px;gap:24px}
+    .muted{color:var(--muted)}
+
+    /* modal */
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);z-index:60}
+    .modal.show{display:flex}
+    .modal-card{background:#fff;border-radius:16px;padding:18px;max-width:760px;width:92%}
+
+    /* responsive */
+    @media (max-width:1024px){
+      .hero-grid{grid-template-columns:1fr}
+      .order-panel{grid-template-columns:1fr}
+      .order-right{order:2}
+      .order-left{order:1}
+    }
+    @media (max-width:640px){
+      .grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));}
+      .advantages{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <div class="logo">OC</div>
+        <div>
+          <div style="font-weight:800">Oblivion Craft</div>
+          <div style="font-size:13px;color:var(--muted)">3D-печать — прототипы, запчасти, сувениры</div>
+        </div>
+      </div>
+      <div class="actions">
+        <nav>
+          <a href="#catalog">Каталог</a>
+          <a href="#about">О мастерской</a>
+          <a href="#order">Заказать</a>
+        </nav>
+        <a class="cta" href="#contacts">Контакты</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-left">
+        <h1>3D‑печать, которой можно доверять</h1>
+        <p class="lead">От экспериментальных прототипов до готовых сувениров — печатаем на FDM и SLA, покраска и пост-обработка доступна под заказ.</p>
+
+        <div class="hero-card">
+          <form class="search" onsubmit="event.preventDefault(); filterProducts();">
+            <input id="q" placeholder="Найти модель или материал" />
+            <button>Найти</button>
+          </form>
+          <div class="tags">
+            <div class="tag">Быстро</div>
+            <div class="tag">Качественно</div>
+            <div class="tag">Под покраску</div>
+            <div class="tag">SLA / FDM</div>
+          </div>
+        </div>
+      </div>
+
+      <aside>
+        <div class="quick-card">
+          <h4 style="margin:0 0 8px;color:var(--accent);">Быстрый заказ</h4>
+          <p class="muted">Загрузите STL-файл и выберите материал — получаете смету в течение рабочего дня.</p>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button class="btn" onclick="scrollToOrder()">Загрузить модель</button>
+            <button class="ghost" onclick="openCallback()">Заказать звонок</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <main class="container">
+    <section id="catalog">
+      <h2>Каталог</h2>
+      <p class="muted">Подборка популярных товаров и примеров наших работ — все можно напечатать в нужном размере и материале.</p>
+      <div class="grid" id="products"></div>
+    </section>
+
+    <section class="advantages" id="advantages">
+      <div class="adv" data-animate>
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.6 5.6L20 9l-4 3.6L17 19l-5-2.6L7 19l1-6.4L4 9l5.4-1.4L12 2z" fill="url(#g)"/></svg>
+        <div>
+          <h4>Качество печати</h4>
+          <p>Точная калибровка, мелкие детали и аккуратная постобработка.</p>
+        </div>
+      </div>
+      <div class="adv" data-animate>
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="18" height="18" rx="3" fill="url(#g2)"/></svg>
+        <div>
+          <h4>Широкий выбор материалов</h4>
+          <p>PLA, PETG, ABS, нейлон, резины и фотополимерные смолы.</p>
+        </div>
+      </div>
+      <div class="adv" data-animate>
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" fill="url(#g3)"/></svg>
+        <div>
+          <h4>Доставка и поддержка</h4>
+          <p>Отправляем по России, поддержка при сборке и покраске.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ORDER SECTION (non-classic) -->
+    <section id="order-section">
+      <div class="order-panel">
+        <div class="order-left">
+          <h3 id="order">Заказать печать</h3>
+          <p>Нестандартный блок заказа: загрузка файла, быстрый расчет и визуальная оценка объёма. Выбирайте материал — подсказки появятся при наведении.</p>
+
+          <form class="order-form" onsubmit="event.preventDefault(); submitOrder();">
+            <input id="name" placeholder="Ваше имя" required />
+            <input id="phone" placeholder="Телефон" required />
+            <div class="upload">
+              <input id="file" type="file" accept=".stl,.obj" />
+            </div>
+            <textarea id="comment" rows="3" placeholder="Комментарий или ссылка на модель (например: Google Drive)"></textarea>
+            <div style="display:flex;gap:12px;align-items:center">
+              <button class="order-cta" type="submit">Оценить проект</button>
+              <button class="ghost" type="button" onclick="openCallback()" style="background:transparent;color:#fff;border:2px solid rgba(255,255,255,0.18);">Заказать звонок</button>
+            </div>
+          </form>
+        </div>
+
+        <aside class="order-right">
+          <div class="price-est">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-weight:800;font-size:20px">Ориентировочная стоимость</div>
+                <div style="font-size:13px;color:rgba(255,255,255,0.9)">Быстрый расчёт по объёму и материалу</div>
+              </div>
+              <div style="font-weight:900;font-size:20px">— ₽</div>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-weight:800;margin-bottom:8px">Материалы</div>
+            <div class="materials">
+              <div class="material" data-tip="PLA — доступный, биоразлагаемый пластик, отлично подходит для прототипов и сувениров.">PLA<div class="tooltip">PLA — доступный, биоразлагаемый пластик, подходит для сувениров.</div></div>
+              <div class="material" data-tip="PETG — прочнее PLA, устойчива к влаге и механическим нагрузкам.">PETG<div class="tooltip">PETG — прочнее PLA, устойчива к влаге.</div></div>
+              <div class="material" data-tip="Nylon — высокопрочный, для функциональных деталей.">Nylon<div class="tooltip">Nylon — высокопрочный для функционала.</div></div>
+              <div class="material" data-tip="SLA Resin — для мелких деталей и гладкой поверхности.">SLA<div class="tooltip">SLA — для мелких и детализированных объектов.</div></div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px;color:rgba(255,255,255,0.95)" class="specs">
+            <div style="font-weight:700">Что мы делаем</div>
+            <div>Калибровка, поддержка, постобработка: шлифовка, грунтовка, покраска.</div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="about" style="margin-top:36px">
+      <div style="background:#fff;border-radius:14px;padding:18px;box-shadow:0 8px 20px rgba(17,17,17,0.04)">
+        <h3>О мастерской</h3>
+        <p class="muted">Мы — студия 3D-печати в Оренбурге: опытные операторы, SLA и FDM парки, отдел покраски и сборки. Отправляем по России, самовывоз возможен.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="cols">
+        <div>
+          <strong>Рыжий Принт</strong>
+          <p class="muted">Мастерская 3D-печати — Оренбург.</p>
+        </div>
+        <div>
+          <h4>Меню</h4>
+          <nav style="display:flex;flex-direction:column;gap:6px">
+            <a href="#catalog">Каталог</a>
+            <a href="#about">О мастерской</a>
+            <a href="#order">Заказать</a>
+          </nav>
+        </div>
+        <div>
+          <h4>Контакты</h4>
+          <p class="muted">Тел: +7 (3532) 22-22-22</p>
+          <p class="muted">Email: info@ryzhiyprint.example</p>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:18px;color:var(--muted);font-size:13px">© Рыжий Принт — демонстрационный сайт</div>
+    </div>
+  </footer>
+
+  <!-- modal -->
+  <div id="modal" class="modal" onclick="if(event.target===this)toggleModal(false)">
+    <div class="modal-card" role="dialog">
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <script>
+    // Sample products
+    const sampleProducts = [
+      {id:1,img:'https://masterpiecer-images.s3.yandex.net/8644e40177d311eeb0e7f6f8c1ba65ae:upscaled',title:'Миниатюра "Рыжий кот"',price:450,desc:'Высота 60 мм. PLA, шлифовка.'},
+      {id:2,img:'https://avatars.mds.yandex.net/i?id=213ece017ad045f6332ed893090c3740_l-5911886-images-thumbs&n=13',title:'Крючок-держатель',price:650,desc:'PETG — прочный и термостойкий.'},
+      {id:3,img:'https://avatars.mds.yandex.net/i?id=580e8c13c641446ac9e33744087cdfe4_l-10831694-images-thumbs&n=13',title:'Подставка для смартфона',price:800,desc:'PLA, сборная модель.'},
+      {id:4,img:'https://3dtoday.ru/upload/blog/78d/78d84f19173fb971852429262096f18e.jpeg',title:'Лого-фигурка',price:1200,desc:'SLA для мелких деталей.'},
+      {id:5,img:'https://avatars.mds.yandex.net/i?id=63a166f1ba8f9c6513250c1b5f532e75_l-4218813-images-thumbs&n=13',title:'Кнопка-элемент',price:300,desc:'Малые функциональные детали.'}
+    ];
+
+    const productsEl = document.getElementById('products');
+    function renderProducts(){
+      productsEl.innerHTML = '';
+      sampleProducts.forEach(p=>{
+        const el = document.createElement('article'); el.className='card';
+        el.innerHTML = `
+          <div class="thumb" style="background-image: url(${p.img});"></div>
+          <div class="title">${p.title}</div>
+          <div class="desc">${p.desc}</div>
+          <div class="meta"><div>Материал: <strong>PLA</strong></div></div>
+          <div class="price">${p.price} ₽</div>
+          <div class="controls"><button class="btn" onclick="openModal(${p.id})">Посмотреть</button><button class="ghost" onclick="addToCart(${p.id})">В корзину</button></div>
+        `;
+        productsEl.appendChild(el);
+      });
+    }
+
+    function openModal(id){
+      const p = sampleProducts.find(x=>x.id===id);
+      const modal = document.getElementById('modal');
+      document.getElementById('modal-content').innerHTML = `<h3 style=\"margin:0 0 8px\">${p.title}</h3><img src="${p.img}" width="100%" alt="lorem"><p style=\"color:var(--muted)\">${p.desc}</p><div style=\"margin-top:12px;font-weight:800;color:var(--accent)\">${p.price} ₽</div>`;
+      toggleModal(true);
+    }
+    function toggleModal(show){document.getElementById('modal').classList.toggle('show',!!show)}
+
+    function addToCart(id){alert('Товар добавлен в корзину — демо');}
+
+    function filterProducts(){const q=document.getElementById('q').value.trim().toLowerCase();const list=sampleProducts.filter(p=>p.title.toLowerCase().includes(q)||p.desc.toLowerCase().includes(q));renderProductsFiltered(list)}
+    function renderProductsFiltered(list){productsEl.innerHTML='';list.forEach(p=>{const el=document.createElement('article');el.className='card';el.innerHTML=`<div class="thumb">${p.title}</div><div class="title">${p.title}</div><div class="desc">${p.desc}</div><div class="price">${p.price} ₽</div><div class="controls"><button class="btn" onclick="openModal(${p.id})">Посмотреть</button><button class="ghost" onclick="addToCart(${p.id})">В корзину</button></div>`;productsEl.appendChild(el)})}
+
+    function submitOrder(){
+      // Простая демонстрация: можно расширить расчётом объёма или отправкой на почту
+      const name = document.getElementById('name').value;
+      const phone = document.getElementById('phone').value;
+      alert(`Спасибо, ${name}! Мы получили вашу заявку и свяжемся по ${phone}. (Демо)`);
+      document.getElementById('name').value='';document.getElementById('phone').value='';document.getElementById('comment').value='';
+    }
+
+    function openCallback(){alert('Ожидайте, мы перезвоним — демо')}
+    function scrollToOrder(){document.getElementById('order-section').scrollIntoView({behavior:'smooth'})}
+
+    // Reveal on scroll (IntersectionObserver)
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){entry.target.classList.add('in-view');}
+      });
+    },{threshold:0.1});
+
+    function initObservers(){
+      document.querySelectorAll('.card').forEach(el=>io.observe(el));
+      document.querySelectorAll('.adv').forEach(el=>io.observe(el));
+    }
+
+    // Attach tooltips (already pure CSS) - enhance with small JS for mobile: tap to show
+    document.addEventListener('click', (e)=>{
+      if(e.target.closest('.material')){
+        const m = e.target.closest('.material');
+        // toggle on mobile
+        const tip = m.querySelector('.tooltip');
+        if(tip.style.display==='block'){tip.style.display='none'} else {tip.style.display='block'; setTimeout(()=>tip.style.display='none',4000)}
+      } else {
+        document.querySelectorAll('.material .tooltip').forEach(t=>t.style.display='none')
+      }
+    });
+
+    // init
+    renderProducts();
+    // wait a tick for elements to be in DOM
+    requestAnimationFrame(()=>initObservers());
+
+    // Accessibility: close modal with Esc
+    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') toggleModal(false)});
+  </script>
+</body>
+</html>
